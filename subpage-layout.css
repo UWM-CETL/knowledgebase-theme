@@ -189,12 +189,13 @@ p:empty {
     visibility: hidden;
 }
 #search-form form input.search {
-    background-color: #ffbd00;
+    background-color: #4CC0B0;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
     border: 1px solid #fff;
-    height: 49px;
+    color: #000000;
+    height: 46px;
     vertical-align: top;
     margin-left: -3px;
     cursor: pointer;
