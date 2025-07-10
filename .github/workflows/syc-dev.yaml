@@ -1,0 +1,51 @@
+# .github/workflows/sync-dev.yml
+name: Auto-sync dev with main
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Merge main → dev
+        id: merge
+        run: |
+          git config user.name  github-actions
+          git config user.email github-actions@github.com
+
+          # fetch both branches
+          git fetch origin main dev
+
+          # try a fast-forward merge
+          git checkout dev
+          if git merge --no-edit origin/main ; then
+            echo "merged=true" >> $GITHUB_OUTPUT
+          else
+            echo "merged=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push merged dev branch
+        if: steps.merge.outputs.merged == 'true'
+        run: |
+          git push origin dev
+
+      - name: Open PR if merge failed (conflict)
+        if: steps.merge.outputs.merged == 'false'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Auto: merge main into dev (needs conflict resolution)"
+          title: "Resolve conflicts: main → dev"
+          body: |
+            The automatic merge hit conflicts. Please resolve them so `dev` stays even with `main`.
+          branch: auto/merge-main-into-dev
+          base: dev
