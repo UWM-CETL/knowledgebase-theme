@@ -608,3 +608,65 @@ footer #copyright .brand {
     margin-top: 2px;
 }
 
+/* Article style overrides */
+
+:root {
+    --h2-color: #035056;
+    --bkg-color: #ffffff;
+}
+
+#page-content[role="article"] h1,
+#page-content[role="article"] h2, 
+#page-content[role="article"] h3,
+#page-content[role="article"] h4,
+#page-content[role="article"] h5,
+#page-content[role="article"] h6 {
+    font-weight: 800;
+}
+
+#page-content[role="article"] h1 {
+    font-size: 37px;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+#page-content[role="article"] h2 {
+    color: var(--h2-color);
+}
+
+#page-content[role="article"] h3,
+#page-content[role="article"] h4,
+#page-content[role="article"] h5,
+#page-content[role="article"] h6 {
+    font-size: 20px;
+}
+
+#page-content[role="article"] h3 {
+    font-size: 20px;
+}
+
+#page-content[role="article"] ul {
+    line-height: 1.35;
+    padding-left: 40px;
+    margin: 0;
+}
+
+#page-content[role="article"] li {
+    margin: 1.5rem 0;
+}
+
+#page-content[role="article"] .offset-left-40 {
+    display: block;
+    padding-left: 40px;
+}
+
+#page-content[role="article"] table.collapsed {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#page-content[role="article"] h2.invertedcolor {
+    color: var(--bkg-color);
+    background-color: var(--h2-color);
+    padding: 0.5em 0.75em;
+}
