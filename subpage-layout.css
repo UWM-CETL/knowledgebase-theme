@@ -227,6 +227,9 @@ p:empty {
     margin: 0;
     padding: 0;
 }
+#maincontent div.custom h2 {
+    display: none;
+}
 #maincontent #custom4 #cat-list {
     margin: 0;
     padding: 0;
