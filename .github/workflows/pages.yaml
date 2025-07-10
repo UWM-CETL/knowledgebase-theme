@@ -1,5 +1,5 @@
 # .github/workflows/pages.yml
-name: Deploy KB CSS to GitHub Pages
+name: Deploy KB CSS
 
 on:
   push:
@@ -8,11 +8,8 @@ on:
 
 permissions:
   contents: write
-  pages: write
+  pages:    write
   id-token: write
-
-env:
-  CONTENT_DIR: .
 
 jobs:
   deploy:
@@ -20,24 +17,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Decide where this branch should land on gh-pages
-      - name: Set deploy parameters
-        run: |
-          if [[ "${GITHUB_REF##*/}" == "dev" ]]; then
-            echo "TARGET_FOLDER=dev"      >> $GITHUB_ENV   # /dev/…
-            echo "CLEAN=false"            >> $GITHUB_ENV   # keep prod intact
-          else
-            echo "TARGET_FOLDER="         >> $GITHUB_ENV   # site root
-            echo "CLEAN=true"             >> $GITHUB_ENV   # wipe old prod
-            echo "CLEAN_EXCLUDE=dev/**"   >> $GITHUB_ENV   # but keep /dev/
-          fi
-
-      # Publish using the action that supports sub-folders
-      - name: Deploy to GitHub Pages
+      # DEV ➜ /dev  (preview)                                          #
+      - name: Deploy dev branch → /dev
+        if: github.ref == 'refs/heads/dev'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ${{ env.CONTENT_DIR }}
+          folder: .
           branch: gh-pages
-          target-folder: ${{ env.TARGET_FOLDER }}
-          clean: ${{ env.CLEAN }}
-          clean-exclude: ${{ env.CLEAN_EXCLUDE }}
+          target-folder: dev
+          clean: false
+
+      # MAIN ➜ root  (production)                                      #
+      - name: Deploy main branch → site root
+        if: github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .
+          branch: gh-pages
+          clean: true
+          clean-exclude: |
+            dev/**
