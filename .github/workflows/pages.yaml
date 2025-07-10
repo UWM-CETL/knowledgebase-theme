@@ -1,0 +1,43 @@
+# .github/workflows/pages.yml
+name: Deploy KB CSS to GitHub Pages
+
+on:
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  CONTENT_DIR: .
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Decide where this branch should land on gh-pages
+      - name: Set deploy parameters
+        run: |
+          if [[ "${GITHUB_REF##*/}" == "dev" ]]; then
+            echo "TARGET_FOLDER=dev"      >> $GITHUB_ENV   # /dev/…
+            echo "CLEAN=false"            >> $GITHUB_ENV   # keep prod intact
+          else
+            echo "TARGET_FOLDER="         >> $GITHUB_ENV   # site root
+            echo "CLEAN=true"             >> $GITHUB_ENV   # wipe old prod
+            echo "CLEAN_EXCLUDE=dev/**"   >> $GITHUB_ENV   # but keep /dev/
+          fi
+
+      # Publish using the action that supports sub-folders
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ${{ env.CONTENT_DIR }}
+          branch: gh-pages
+          target-folder: ${{ env.TARGET_FOLDER }}
+          clean: ${{ env.CLEAN }}
+          clean-exclude: ${{ env.CLEAN_EXCLUDE }}
